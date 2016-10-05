@@ -4,7 +4,7 @@
 */
 
 function FingerPrint() {
-var platform = cordova.getDevice();
+var platform = cordova.platformId;
 }
 
 exports.isAvailable = function (successCallback, errorCallback) {
