@@ -36,7 +36,7 @@ FingerPrint.prototype.auth = function (successCallback, errorCallback,message,ap
 			errorCallback(message);
     };
     if(cordova.platformId === "android"){
-      var args = '{clientID:"' + appName + '", clientSecret:"'+clientSecret+'",dialogMessage:"'+ message +'"}';
+      var args = '{clientId:"' + appName + '",clientSecret:"'+clientSecret+'",dialogMessage:"'+ message +'"}';
       FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
     }
     if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, message);
