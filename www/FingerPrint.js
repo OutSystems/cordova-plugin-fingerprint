@@ -3,9 +3,7 @@
 	Domingos Gomes - 04/10/2016
 */
 
-var FingerPrint = function () {
-var platform = cordova.platformId;
-}
+var FingerPrint = function () {};
 
 FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
 var successCbFingerPrintAuth = function(result) {
@@ -24,8 +22,8 @@ var errorCbFingerPrintAuth = function(error) {
   }
 	errorCallback(message);
 };
-if(platform === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);
-if(platform === "ios")touchid.checkSupport(successCallback, errorCallback);
+if(cordova.platformId === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);
+if(cordova.platformId === "ios")touchid.checkSupport(successCallback, errorCallback);
 };
 
 FingerPrint.prototype.auth = function (successCallback, errorCallback,message,appName,clientSecret) {
@@ -37,11 +35,11 @@ FingerPrint.prototype.auth = function (successCallback, errorCallback,message,ap
 			var message = "authenticationFailed"
 			errorCallback(message);
     };
-    if(platform === "android"){
+    if(cordova.platformId === "android"){
       var args = '{clientID:"' + appName + '", clientSecret:"'+clientSecret+'",dialogMessage:"'+ message +'"}';
       FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
     }
-    if(platform === "ios")touchid.authenticate(successCallback, errorCallback, message);
+    if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, message);
 };
 
 module.exports = new FingerPrint();
