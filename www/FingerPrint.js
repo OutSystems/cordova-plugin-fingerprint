@@ -3,11 +3,11 @@
 	Domingos Gomes - 04/10/2016
 */
 
-function FingerPrint() {
+var FingerPrint = function () {
 var platform = cordova.platformId;
 }
 
-exports.isAvailable = function (successCallback, errorCallback) {
+FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
 var successCbFingerPrintAuth = function(result) {
 
   successCallback(null);
@@ -19,7 +19,7 @@ var errorCbFingerPrintAuth = function(error) {
     message = "This device didn't support Touch ID";
     }
 		else if(!error.hasEnrolledFingerprints){
-    message "No fingers are enrolled with Touch ID";
+    message = "No fingers are enrolled with Touch ID";
     }
   }
 	errorCallback(message);
@@ -28,7 +28,7 @@ if(platform === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, 
 if(platform === "ios")touchid.checkSupport(successCallback, errorCallback);
 };
 
-exports.auth = function (successCallback, errorCallback,message,appName,clientSecret) {
+FingerPrint.prototype.auth = function (successCallback, errorCallback,message,appName,clientSecret) {
 
     var successCbFingerPrintAuth = function(result) {
       successCallback(null);
@@ -38,8 +38,10 @@ exports.auth = function (successCallback, errorCallback,message,appName,clientSe
 			errorCallback(message);
     };
     if(platform === "android"){
-      var args = '{clientID:"' + appName + '", clientSecret:"'+clientSecret+'",dialogMessage:"' message +'"}';
+      var args = '{clientID:"' + appName + '", clientSecret:"'+clientSecret+'",dialogMessage:"'+ message +'"}';
       FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
     }
     if(platform === "ios")touchid.authenticate(successCallback, errorCallback, message);
 };
+
+module.exports = new FingerPrint();
