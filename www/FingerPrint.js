@@ -33,10 +33,10 @@ FingerPrint.prototype.auth = function (successCallback, errorCallback,message,ap
     };
     var errorCbFingerPrintAuth = function(error) {
 			var message = "authenticationFailed"
-			errorCallback(message);
+			errorCallback(error);
     };
     if(cordova.platformId === "android"){
-      var args = '{clientId:"' + appName + '",clientSecret:"'+clientSecret+'",dialogMessage:"'+ message +'"}';
+      var args = JSON.parse( '{ "clientId":"' + appName + '", "clientSecret":"'+clientSecret+'", "dialogMessage":"'+ message +'" }');
       FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
     }
     if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, message);
