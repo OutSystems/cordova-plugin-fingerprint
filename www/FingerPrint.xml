@@ -31,13 +31,10 @@ if(platform === "ios")touchid.checkSupport(successCallback, errorCallback);
 exports.auth = function (successCallback, errorCallback,message,appName,clientSecret) {
 
     var successCbFingerPrintAuth = function(result) {
-
       successCallback(null);
     };
     var errorCbFingerPrintAuth = function(error) {
-			var message
-
-
+			var message = "authenticationFailed"
 			errorCallback(message);
     };
     if(platform === "android"){
