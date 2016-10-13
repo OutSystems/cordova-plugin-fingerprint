@@ -4,43 +4,45 @@
 */
 
 var FingerPrint = function () {};
-
+// method to check is the touch id option is available in the device
 FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
-var successCbFingerPrintAuth = function(result) {
+  // success callback function for android 
+  var successCbFingerPrintAuth = function(result) {successCallback(null);};
 
-  successCallback(null);
-};
-var errorCbFingerPrintAuth = function(error) {
-	var message;
-  if(!error.isAvailable){
-    if(!error.isHardwareDetected){
-    message = "This device didn't support Touch ID";
+  // error callback function for android 
+  var errorCbFingerPrintAuth = function(error) {
+    var message;
+    if(!error.isAvailable){
+      // if not support touch id
+      if(!error.isHardwareDetected){
+        message = "This device didn't support Touch ID";
+      }
+      // if not have any finger print enrolled in the device
+      else if(!error.hasEnrolledFingerprints){
+        message = "No fingers are enrolled with Touch ID";
+      }
     }
-		else if(!error.hasEnrolledFingerprints){
-    message = "No fingers are enrolled with Touch ID";
-    }
-  }
-	errorCallback(message);
-};
-if(cordova.platformId === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);
-if(cordova.platformId === "ios")touchid.checkSupport(successCallback, errorCallback);
+    errorCallback(message);
+  };
+  // if the device is android call th FingerprintAuth plugin
+  if(cordova.platformId === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);
+  // if the device is ios call the touchid plugin 
+  if(cordova.platformId === "ios")touchid.checkSupport(successCallback, errorCallback);
 };
 
+// method to authenticate with touch id 
 FingerPrint.prototype.authenticate = function (successCallback, errorCallback,object) {
-
-    var successCbFingerPrintAuth = function(result) {
-      successCallback(null);
-    };
+    // success callback function for android 
+    var successCbFingerPrintAuth = function(result) {successCallback(null);};
+    // error callback function for android 
     var errorCbFingerPrintAuth = function(error) {
 			var message = "authenticationFailed"
 			errorCallback(error);
     };
-
-      var args = JSON.parse(object);
-    if(cordova.platformId === "android"){
-      FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
-    }
-    if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, args.dialogMessage);
+    // if the device is android call th FingerprintAuth plugin
+    if(cordova.platformId === "android"){FingerprintAuth.show(object, successCbFingerPrintAuth, errorCbFingerPrintAuth);}
+    // if the device is ios call the touchid plugin 
+    if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, object.dialogMessage);
 };
 
 module.exports = new FingerPrint();
