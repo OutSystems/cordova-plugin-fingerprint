@@ -48,6 +48,7 @@
   ```
   touchid.authenticate(successCallback, failureCallback, object);
   ```
+
   #### Config Object for
   | Param | Type | Default | Description |
   | --- | --- | --- | --- |
