@@ -26,7 +26,7 @@ if(cordova.platformId === "android")FingerprintAuth.isAvailable(successCbFingerP
 if(cordova.platformId === "ios")touchid.checkSupport(successCallback, errorCallback);
 };
 
-FingerPrint.prototype.auth = function (successCallback, errorCallback,message,appName,clientSecret) {
+FingerPrint.prototype.authenticate = function (successCallback, errorCallback,object) {
 
     var successCbFingerPrintAuth = function(result) {
       successCallback(null);
@@ -35,11 +35,12 @@ FingerPrint.prototype.auth = function (successCallback, errorCallback,message,ap
 			var message = "authenticationFailed"
 			errorCallback(error);
     };
+
+      var args = JSON.parse(object);
     if(cordova.platformId === "android"){
-      var args = JSON.parse( '{ "clientId":"' + appName + '", "clientSecret":"'+clientSecret+'", "dialogMessage":"'+ message +'" }');
       FingerprintAuth.show(args, successCbFingerPrintAuth, errorCbFingerPrintAuth);
     }
-    if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, message);
+    if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, args.dialogMessage);
 };
 
 module.exports = new FingerPrint();
