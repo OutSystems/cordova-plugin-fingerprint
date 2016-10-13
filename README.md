@@ -3,23 +3,23 @@
   Cordova Plugin to leverage the local authentication framework to allow in-app user authentication using Touch ID.
 
 
-  ## Supported Platforms
+## Supported Platforms
 
   - iOS
   - Android
 
-  ## Dependencies 
+## Dependencies 
 
   - cordova-plugin-android-fingerprint-auth
   - cordova-plugin-touchid
 
-  ## Installation
+## Installation
   - Run the following command:
 
   ```shell
       cordova plugin add https://bitbucket.org/uxmobile/fingerprint-cordova-plugin.git
   ```
-  #Setup for Android
+#Setup for Android
   Add preference to mobile-config.js
   ```
   App.setPreference('android-targetSdkVersion', '23');
@@ -31,13 +31,13 @@
   buildToolsVersion "23.0.2"
   ```
 
-  ## Usage
+## Usage
 
   You **do not** need to reference any JavaScript, the Cordova plugin architecture will add a touchid object to your root automatically when you build.
 
   Ensure you use the plugin after your deviceready event has been fired.
 
-  ### Authenticate
+### Authenticate
 
   Pass the following arguments to the `authenticate()` function, to prompt the user to authenticate via TouchID:
 
@@ -49,7 +49,7 @@
   touchid.authenticate(successCallback, failureCallback, object);
   ```
 
-  #### Config Object for
+#### Config Object for
   | Param | Type | Default | Description |
   | --- | --- | --- | --- |
   | clientId | String | undefined | (REQUIRED) Used as the alias for your key in the Android Key Store. |
@@ -63,9 +63,9 @@
   | dialogHint | String | undefined | Set the hint displayed by the fingerprint icon on the fingerprint authentication dialog. |
 
 
-  *NOTE: The dialogMessage you present to the user should provide a clear reason for why you are requesting they authenticate themselves, and what action you will be taking based on that authentication.
+*NOTE: The dialogMessage you present to the user should provide a clear reason for why you are requesting they authenticate themselves, and what action you will be taking based on that authentication.
 
-  ### Check support
+### Check support
 
   Although the `authenticate()` function will return an error if the user is unable to authenticate via Touch ID, you may wish to check support without prompting the user to authenticate. This can be done by passing following arguments to the `checkSupport()` function:
 
@@ -76,19 +76,19 @@
   touchid.checkSupport(successCallback, notSupportedCallback);
   ```
 
-  ## Platforms
+## Platforms
 
   iOS 8+
   Android 23+
 
-  #### Contributors
+#### Contributors
   - Domingos Gomes, <domingos.gomes@outsystems.com>
-  #### Document author
+#### Document author
   - Domingos Gomes, <domingos.gomes@outsystems.com>
 
-  ### Copyright OutSystems, 2016
+### Copyright OutSystems, 2016
 
-  ---
+---
 
   LICENSE
   =======
