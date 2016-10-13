@@ -16,17 +16,19 @@
 ## Installation
   - Run the following command:
 
-  ```shell
+ ```shell
       cordova plugin add https://bitbucket.org/uxmobile/fingerprint-cordova-plugin.git
   ```
 #Setup for Android
   Add preference to mobile-config.js
-  ```
+  
+```
   App.setPreference('android-targetSdkVersion', '23');
   ```
 
   set compile version and build tools in build.gradle
-  ```
+  
+```
   compileSdkVersion 23
   buildToolsVersion "23.0.2"
   ```
