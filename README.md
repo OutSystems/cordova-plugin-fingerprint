@@ -2,6 +2,7 @@
 
   Cordova Plugin to leverage the local authentication framework to allow in-app user authentication using Touch ID.
 
+:warning: This plugin is SUPPORTED by OutSystems. Customers entitled to Support Services may obtain assistance through Support.
 
 ## Supported Platforms
 
