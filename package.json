@@ -1,0 +1,34 @@
+{
+  "name": "outsystems-plugin-fingerprint",
+  "version": "1.0.1",
+  "description": "Cordova FingerPrint Plugin",
+  "cordova": {
+    "id": "outsystems-plugin-fingerprint",
+    "platforms": []
+  },
+  "dependencies": {
+    "cordova-plugin-android-fingerprint-auth":"https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#0.1.os",
+    "cordova-plugin-touchid":"https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0.os"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OutSystems/cordova-plugin-fingerprint.git"
+  },
+  "keywords": [
+    "cordova",
+    "device",
+    "ecosystem:cordova"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "OutSystems",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/OutSystems/cordova-plugin-fingerprint/issues"
+  },
+  "homepage": "https://github.com/OutSystems/cordova-plugin-fingerprint#readme"
+}
