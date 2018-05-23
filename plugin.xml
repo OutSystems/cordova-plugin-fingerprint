@@ -3,13 +3,13 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="outsystems-plugin-fingerprint"
-    version="1.0.1">
+    version="1.0.2">
     <name>fingerprint</name>
     <description>Cordova FingerPrint Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,device</keywords>
-    <dependency id="cordova-plugin-android-fingerprint-auth" url="https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#0.1.os" />
-    <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0.os" />
+    <dependency id="cordova-plugin-android-fingerprint-auth" url="https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#0.3.0-OS" />
+    <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS" />
      <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
