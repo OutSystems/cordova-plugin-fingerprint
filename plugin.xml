@@ -8,7 +8,7 @@
     <description>Cordova FingerPrint Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,device</keywords>
-    <dependency id="cordova-plugin-android-fingerprint-auth" url="https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#0.3.0-OS" />
+    <dependency id="cordova-plugin-android-fingerprint-auth" url="https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#1.4.4" />
     <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS" />
      <engines>
         <engine name="cordova" version=">=3.0.0" />
