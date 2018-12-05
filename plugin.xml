@@ -16,4 +16,12 @@
     <js-module src="www/FingerPrint.js" name="FingerPrint">
         <clobbers target="fingerprint" />
     </js-module>
+
+    <platform name="ios">
+        <!-- Usage description of the FaceID, mandatory since iOS 10 -->
+        <preference name="FACEID_USAGE_DESCRIPTION" default=" " />
+        <config-file target="*-Info.plist" parent="NSFaceIDUsageDescription">
+            <string>$FACEID_USAGE_DESCRIPTION</string>
+        </config-file>
+    </platform>
 </plugin>
