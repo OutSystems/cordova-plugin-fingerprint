@@ -1,6 +1,6 @@
 {
   "name": "outsystems-plugin-fingerprint",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cordova FingerPrint Plugin",
   "cordova": {
     "id": "outsystems-plugin-fingerprint",
