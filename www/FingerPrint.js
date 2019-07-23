@@ -62,7 +62,6 @@ FingerPrint.prototype.authenticate = function (successCallback, errorCallback,ob
     if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, object.dialogMessage);
 };
 
-//TODO: change android method
 FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
     // success callback function for android 
     var successCbFingerPrintAuth = function(result) {successCallback(1)};
