@@ -41,7 +41,7 @@ FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
     }
     errorCallback(message);
   };
-  // if the device is android call th FingerprintAuth plugin
+  // if the device is android call the FingerprintAuth plugin
   if(cordova.platformId === "android")FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);
   // if the device is ios call the touchid plugin 
   if(cordova.platformId === "ios")touchid.checkSupport(successCallback, errorCallback);
@@ -56,10 +56,24 @@ FingerPrint.prototype.authenticate = function (successCallback, errorCallback,ob
 			var message = "authenticationFailed"
 			errorCallback(error);
     };
-    // if the device is android call th FingerprintAuth plugin
+    // if the device is android call the FingerprintAuth plugin
     if(cordova.platformId === "android"){FingerprintAuth.encrypt(object, successCbFingerPrintAuth, errorCbFingerPrintAuth);}
     // if the device is ios call the touchid plugin 
     if(cordova.platformId === "ios")touchid.authenticate(successCallback, errorCallback, object.dialogMessage);
 };
+
+FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
+    // success callback function for android 
+    var successCbFingerPrintAuth = function(result) {successCallback(1)};
+    // error callback function for android 
+    var errorCbFingerPrintAuth = function(error) {
+			errorCallback(-1);
+    };
+  
+    // if the device is android call the FingerprintAuth plugin
+    if(cordova.platformId === "android"){FingerprintAuth.isAvailable(successCbFingerPrintAuth, errorCbFingerPrintAuth);}
+    // if the device is ios call the touchid plugin 
+    if(cordova.platformId === "ios")touchid.checkBiometry(successCallback, errorCallback);
+}
 
 module.exports = new FingerPrint();
