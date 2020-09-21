@@ -3,19 +3,23 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="outsystems-plugin-fingerprint"
-    version="2.0.2">
+    version="3.0.0">
     <name>fingerprint</name>
     <description>Cordova FingerPrint Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,device</keywords>
-    <dependency id="cordova-plugin-android-fingerprint-auth" url="https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#1.4.4" />
-    <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS1" />
-     <engines>
+    
+    <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
     <js-module src="www/FingerPrint.js" name="FingerPrint">
         <clobbers target="fingerprint" />
     </js-module>
+
+
+    <platform name="android">
+        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#v3.0.1" />
+    </platform>
 
     <platform name="ios">
         <!-- Usage description of the FaceID, mandatory since iOS 10 -->
@@ -23,5 +27,6 @@
         <config-file target="*-Info.plist" parent="NSFaceIDUsageDescription">
             <string>$FACEID_USAGE_DESCRIPTION</string>
         </config-file>
+        <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS1" />
     </platform>
 </plugin>

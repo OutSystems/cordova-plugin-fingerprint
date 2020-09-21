@@ -11,7 +11,7 @@
 
 ## Dependencies 
 
-  - cordova-plugin-android-fingerprint-auth
+  - cordova-plugin-fingerprint-aio
   - cordova-plugin-touchid
 
 ## Installation
