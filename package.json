@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "cordova-plugin-android-fingerprint-auth":"https://github.com/OutSystems/cordova-plugin-android-fingerprint-auth.git#1.4.4",
-    "cordova-plugin-touchid":"https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS"
+    "cordova-plugin-touchid":"https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS2"
   },
   "repository": {
     "type": "git",
