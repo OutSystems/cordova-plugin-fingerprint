@@ -27,6 +27,6 @@
         <config-file target="*-Info.plist" parent="NSFaceIDUsageDescription">
             <string>$FACEID_USAGE_DESCRIPTION</string>
         </config-file>
-        <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS1" />
+        <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS2" />
     </platform>
 </plugin>
