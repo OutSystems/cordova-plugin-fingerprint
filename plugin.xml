@@ -18,7 +18,7 @@
 
 
     <platform name="android">
-        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#v3.0.1" />
+        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#v4.0.1" />
     </platform>
 
     <platform name="ios">
