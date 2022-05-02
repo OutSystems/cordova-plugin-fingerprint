@@ -18,7 +18,7 @@
 
 
     <platform name="android">
-        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#4.0.1-OS" />
+        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#fix/RMET-1535/remove-exported-true" />
     </platform>
 
     <platform name="ios">
