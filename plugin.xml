@@ -18,7 +18,7 @@
 
 
     <platform name="android">
-        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#fix/RMET-1550/let-user-try-scanning-again" />
+        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#4.0.1-OS2" />
     </platform>
 
     <platform name="ios">
