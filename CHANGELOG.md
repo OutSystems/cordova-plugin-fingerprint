@@ -8,5 +8,7 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
+## [3.1.5]
+
 ## 28-06-2022
 - Fixed bug for message description in iOS (https://outsystemsrd.atlassian.net/browse/RMET-1683).
