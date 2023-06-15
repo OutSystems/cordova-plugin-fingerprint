@@ -8,6 +8,11 @@ The changes documented here do not include those from the original repository.
 
 ## [Unreleased]
 
+## [3.1.6]
+
+## 07-06-2023
+- [Android] Removed workaround fix implemented for Android <= 9. (https://outsystemsrd.atlassian.net/browse/RMET-2636)
+
 ## [3.1.5]
 
 ## 28-06-2022
