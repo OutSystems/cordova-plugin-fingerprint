@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
-## [Unreleased]
+## [3.1.7]
+
+## 21-02-2024
+- [Android] Fix bug on Android 9 when no biometric was configured. (https://outsystemsrd.atlassian.net/browse/RMET-3176)
 
 ## [3.1.6]
 
