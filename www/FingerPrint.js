@@ -70,7 +70,7 @@ FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
     }
 
     function isAvailableError(error) {
-      errorCallback(error);
+      errorCallback(-1);
     }
 
     // if the device is android call the Fingerprint plugin
