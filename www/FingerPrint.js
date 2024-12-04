@@ -30,7 +30,7 @@ FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
   }
 
   function isAvailableError(error) {
-    errorCallback(-1);
+    errorCallback(error);
   }
   // if the device is android call the Fingerprint plugin
   if(cordova.platformId === "android")Fingerprint.isAvailable(isAvailableSuccess, isAvailableError);
@@ -70,7 +70,7 @@ FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
     }
 
     function isAvailableError(error) {
-      errorCallback(-1);
+      errorCallback(error);
     }
 
     // if the device is android call the Fingerprint plugin
