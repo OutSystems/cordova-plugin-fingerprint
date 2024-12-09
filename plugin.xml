@@ -18,7 +18,7 @@
 
 
     <platform name="android">
-        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#fix/RMET-2652/biometrics-error-messages" />
+        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#4.0.1-OS6" />
     </platform>
 
     <platform name="ios">
