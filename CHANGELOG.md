@@ -9,7 +9,7 @@ The changes documented here do not include those from the original repository.
 ## Unreleased
 
 ## 05-12-2024
-- [Android] Breaking Change - Return error information in callback
+- Breaking Change - Return error information in callback
 
 ## [3.1.8]
 
