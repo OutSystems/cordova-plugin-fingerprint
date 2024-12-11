@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
-## [3.1.8]
+## [4.0.0]
+
+## 05-12-2024
+- [Android] Breaking Change - Return error information in callback
 
 ## 04-12-2024
 - [Android] Fix issue where multiple wrong biometric attempts would cause the plugin to return lockout automatically in future prompts.
