@@ -67,6 +67,15 @@
         <config-file target="*-Info.plist" parent="NSFaceIDUsageDescription">
             <string>$FACEID_USAGE_DESCRIPTION</string>
         </config-file>
-        <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS2" />
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="TouchID">
+                <param name="ios-package" value="TouchID" />
+            </feature>
+        </config-file>
+        <header-file src="src/ios/TouchID.h" />
+        <source-file src="src/ios/TouchID.m" />
+        <framework src="LocalAuthentication.framework" />
+        <framework src="Security.framework" />
     </platform>
 </plugin>
