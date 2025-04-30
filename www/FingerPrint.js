@@ -40,10 +40,10 @@ FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
   }
 
   if(getPlatformId() === "android") {
-    cordova.exec(isAvailableSuccess, isAvailableError, "fingerprint", "isAvailable", []);
+    cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", []);
   }
   else if(getPlatformId() === "ios") {
-    cordova.exec(successCallback, errorCallback, "fingerprint", "checkSupport", []);
+    cordova.exec(successCallback, errorCallback, "touchid", "checkSupport", []);
   }
 };
 
@@ -57,13 +57,13 @@ FingerPrint.prototype.authenticate = function (successCallback, errorCallback, o
 			errorCallback(message);
     };
     if(getPlatformId() === "android") {
-      cordova.exec(successCbFingerPrintAuth, errorCbFingerPrintAuth, "fingerprint", "authenticate", [object]);
+      cordova.exec(successCbFingerPrintAuth, errorCbFingerPrintAuth, "Fingerprint", "authenticate", [object]);
     }
     else if(getPlatformId() === "ios") {
       if (!object.description) {
         object.description = "Please authenticate via TouchID to proceed";
       }
-      cordova.exec(successCallback, errorCallback, "fingerprint", "authenticate", [object.description]);
+      cordova.exec(successCallback, errorCallback, "touchid", "authenticate", [object.description]);
     }
 };
 
@@ -88,10 +88,10 @@ FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
     }
 
     if(getPlatformId() === "android") {
-      cordova.exec(isAvailableSuccess, isAvailableError, "fingerprint", "isAvailable", []);
+      cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", []);
     }
     else if(getPlatformId() === "ios") {
-      cordova.exec(successCallback, errorCallback, "fingerprint", "checkBiometry");
+      cordova.exec(successCallback, errorCallback, "touchid", "checkBiometry");
     }
 }
 
