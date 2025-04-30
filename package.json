@@ -4,7 +4,10 @@
   "description": "Cordova FingerPrint Plugin",
   "cordova": {
     "id": "outsystems-plugin-fingerprint",
-    "platforms": []
+    "platforms": [
+      "android",
+      "ios"
+    ]
   },
   "repository": {
     "type": "git",
@@ -15,12 +18,16 @@
     "device",
     "ecosystem:cordova"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.0.0"
+  "devDependencies": {
+    "cordova-plugin-xml": "^0.1.2"
+  },
+  "engines": {
+    "cordovaDependencies": {
+      ">=3.0.0": {
+        "cordova-android": ">=8.0.0"
+      }
     }
-  ],
+  },
   "author": "OutSystems",
   "license": "Apache 2.0",
   "bugs": {
