@@ -9,10 +9,12 @@
   - iOS
   - Android
 
-## Dependencies 
+## Credits 
 
-  - cordova-plugin-fingerprint-aio
-  - cordova-plugin-touchid
+The native source code was based from other GitHub repositories:
+
+  - For Android: https://github.com/OutSystems/cordova-plugin-fingerprint-aio - Forked from [NiklasMerz](https://github.com/NiklasMerz/cordova-plugin-fingerprint-aio) (MIT License).
+  - For iOS: https://github.com/OutSystems/cordova-plugin-touchid - Forked from [leecrossley](https://github.com/leecrossley/cordova-plugin-touchid).
 
 ## Installation
   - Run the following command:

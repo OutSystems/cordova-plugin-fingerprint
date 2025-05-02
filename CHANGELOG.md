@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## [Unreleased]
+
+## 02-05-2025
+
+- Unified cordova plugins for Android and iOS, removing the dependencies on `cordova-plugin-fingerprint-aio` and `cordova-plugin-touchid`
+- [Android] Fix `AndroidManifest.xml` changes in `plugin.xml` to be compatible with Capacitor.
+
 ## [4.0.0]
 
 ## 05-12-2024
