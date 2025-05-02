@@ -32,12 +32,12 @@
             </feature>
         </config-file>
       
-        <config-file target="AndroidManifest.xml" parent="/*">
+        <edit-config file="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.USE_BIOMETRIC" />
             <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="application">
+        <edit-config file="AndroidManifest.xml" parent="application">
             <activity
                 android:name="de.niklasmerz.cordova.biometric.BiometricActivity"
                 android:theme="@style/TransparentTheme"
