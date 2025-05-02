@@ -35,14 +35,14 @@
         <edit-config file="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.USE_BIOMETRIC" />
             <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
-        </config-file>
+        </edit-config>
 
         <edit-config file="AndroidManifest.xml" parent="application">
             <activity
                 android:name="de.niklasmerz.cordova.biometric.BiometricActivity"
                 android:theme="@style/TransparentTheme"
                 android:exported="false" />
-        </config-file>
+        </edit-config>
       
         <framework src="src/android/build.gradle" custom="true" type="gradleReference"/>
         <resource-file src="src/android/res/biometric_activity.xml" target="res/layout/biometric_activity.xml" />
