@@ -3,7 +3,7 @@
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="outsystems-plugin-fingerprint"
-    version="4.0.0">
+    version="4.1.0">
     <name>fingerprint</name>
     <description>Cordova FingerPrint Plugin</description>
     <license>Apache 2.0</license>
@@ -11,15 +11,55 @@
     
     <engines>
         <engine name="cordova" version=">=3.0.0" />
+        <engine name="cordova-android" version=">=8.0.0" />
     </engines>
+
     <js-module src="www/FingerPrint.js" name="FingerPrint">
         <clobbers target="fingerprint" />
     </js-module>
 
 
     <platform name="android">
-        <dependency id="cordova-plugin-fingerprint-aio" url="https://github.com/OutSystems/cordova-plugin-fingerprint-aio.git#4.0.1-OS6" />
+        <config-file target="config.xml" parent="/*">
+            <platform name="android">
+                <preference name="AndroidXEnabled" value="true" />
+            </platform>
+        </config-file>
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Fingerprint">
+                <param name="android-package" value="de.niklasmerz.cordova.biometric.Fingerprint"/>
+            </feature>
+        </config-file>
+      
+        <edit-config target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+            <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+        </edit-config>
+
+        <edit-config target="AndroidManifest.xml" parent="application">
+            <activity
+                android:name="de.niklasmerz.cordova.biometric.BiometricActivity"
+                android:theme="@style/TransparentTheme"
+                android:exported="false" />
+        </edit-config>
+      
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference"/>
+        <resource-file src="src/android/res/biometric_activity.xml" target="res/layout/biometric_activity.xml" />
+        <resource-file src="src/android/res/styles.xml" target="res/values/biometric-styles.xml" />
+        <source-file src="src/android/PromptInfo.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/BiometricActivity.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/BiometricActivityType.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/Fingerprint.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/PluginError.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/Args.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/CryptographyManager.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/CryptographyManagerImpl.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/EncryptedData.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/CryptoException.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
+        <source-file src="src/android/KeyInvalidatedException.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
     </platform>
+
 
     <platform name="ios">
         <!-- Usage description of the FaceID, mandatory since iOS 10 -->
@@ -27,6 +67,15 @@
         <config-file target="*-Info.plist" parent="NSFaceIDUsageDescription">
             <string>$FACEID_USAGE_DESCRIPTION</string>
         </config-file>
-        <dependency id="cordova-plugin-touchid" url="https://github.com/OutSystems/cordova-plugin-touchid.git#0.4.0-OS2" />
+
+        <config-file target="config.xml" parent="/*">
+            <feature name="TouchID">
+                <param name="ios-package" value="TouchID" />
+            </feature>
+        </config-file>
+        <header-file src="src/ios/TouchID.h" />
+        <source-file src="src/ios/TouchID.m" />
+        <framework src="LocalAuthentication.framework" />
+        <framework src="Security.framework" />
     </platform>
 </plugin>
