@@ -40,7 +40,6 @@ public class Fingerprint extends CordovaPlugin {
 
         this.mCallbackContext = callbackContext;
         Log.v(TAG, "Fingerprint action: " + action);
-        
         if ("authenticate".equals(action)) {
             executeAuthenticate(args);
             return true;
