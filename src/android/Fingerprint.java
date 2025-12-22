@@ -168,16 +168,12 @@ public class Fingerprint extends CordovaPlugin {
 
             PluginResult result = new PluginResult(PluginResult.Status.ERROR, resultJson);
             result.setKeepCallback(true);
-            if (cordova.getActivity() != null) {
-                if(Fingerprint.this.mCallbackContext != null){
-                    cordova.getActivity().runOnUiThread(() ->
-                            Fingerprint.this.mCallbackContext.sendPluginResult(result));
-                }
-                else{
-                    Log.e(TAG, code + ":" + message);
-                }
-            } else {
-                Log.e(TAG, "Cordova activity does not exist.");
+            if(Fingerprint.this.mCallbackContext != null){
+                cordova.getActivity().runOnUiThread(() ->
+                        Fingerprint.this.mCallbackContext.sendPluginResult(result));
+            }
+            else{
+                Log.e(TAG, code + ":" + message);
             }
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
