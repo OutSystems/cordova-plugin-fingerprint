@@ -54,15 +54,16 @@ public class Fingerprint extends CordovaPlugin {
              return true;
 
          } else if ("isAvailable".equals(action)) {
-            executeIsAvailable();
+            executeIsAvailable(args);
             return true;
 
         }
         return false;
     }
 
-    private void executeIsAvailable() {
-        PluginError error = canAuthenticate();
+    private void executeIsAvailable(JSONArray args) {
+        boolean requireStrongBiometrics = new Args(args).getBoolean("requireStrongBiometrics", false);
+        PluginError error = canAuthenticate(requireStrongBiometrics);
         if (error != null) {
             sendError(error);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
@@ -88,8 +89,13 @@ public class Fingerprint extends CordovaPlugin {
         this.runBiometricActivity(args, BiometricActivityType.JUST_AUTHENTICATE);
     }
 
+    private boolean determineStrongBiometricsRequired(BiometricActivityType type) {
+        return type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
+    }
+
     private void runBiometricActivity(JSONArray args, BiometricActivityType type) {
-        PluginError error = canAuthenticate();
+        boolean requireStrongBiometrics = determineStrongBiometricsRequired(type);
+        PluginError error = canAuthenticate(requireStrongBiometrics);
         if (error != null) {
             sendError(error);
             return;
@@ -135,22 +141,17 @@ public class Fingerprint extends CordovaPlugin {
         }
     }
 
-    private PluginError canAuthenticate() {
-        int error = BiometricManager.from(cordova.getContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK);
-
+    private PluginError canAuthenticate(boolean requireStrongBiometrics) {
+        int error = BiometricManager.from(cordova.getContext()).canAuthenticate(requireStrongBiometrics ? BiometricManager.Authenticators.BIOMETRIC_STRONG : BiometricManager.Authenticators.BIOMETRIC_WEAK);
         switch (error) {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
                 return PluginError.BIOMETRIC_HARDWARE_NOT_SUPPORTED;
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 return PluginError.BIOMETRIC_NOT_ENROLLED;
-            case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
-                return PluginError.BIOMETRIC_SECURITY_VULNERABILITY;
             case BiometricManager.BIOMETRIC_SUCCESS:
-                return null;
-            case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
             default:
-                return PluginError.BIOMETRIC_UNKNOWN_ERROR;
+                return null;
         }
     }
 
@@ -162,12 +163,16 @@ public class Fingerprint extends CordovaPlugin {
 
             PluginResult result = new PluginResult(PluginResult.Status.ERROR, resultJson);
             result.setKeepCallback(true);
-            if(Fingerprint.this.mCallbackContext != null){
-                cordova.getActivity().runOnUiThread(() ->
-                        Fingerprint.this.mCallbackContext.sendPluginResult(result));
-            }
-            else{
-                Log.e(TAG, code + ":" + message);
+            if (cordova.getActivity() != null) {
+                if(Fingerprint.this.mCallbackContext != null){
+                    cordova.getActivity().runOnUiThread(() ->
+                            Fingerprint.this.mCallbackContext.sendPluginResult(result));
+                }
+                else{
+                    Log.e(TAG, code + ":" + message);
+                }
+            } else {
+                Log.e(TAG, "Cordova activity does not exist.");
             }
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -179,7 +184,6 @@ public class Fingerprint extends CordovaPlugin {
     }
 
     private void sendSuccess(String message) {
-        Log.e(TAG, message);
         cordova.getActivity().runOnUiThread(() ->
                 this.mCallbackContext.success(message));
     }
