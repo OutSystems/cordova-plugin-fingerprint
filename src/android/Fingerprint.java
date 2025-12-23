@@ -88,13 +88,12 @@ public class Fingerprint extends CordovaPlugin {
         this.runBiometricActivity(args, BiometricActivityType.JUST_AUTHENTICATE);
     }
 
-    private boolean determineStrongBiometricsRequired(BiometricActivityType type) {
-        return type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
-    }
-
     private void runBiometricActivity(JSONArray args, BiometricActivityType type) {
-        boolean requireStrongBiometrics = determineStrongBiometricsRequired(type);
+        boolean requireStrongBiometricsFromArgs = new Args(args).getBoolean("requireStrongBiometrics", false);
+
+        boolean requireStrongBiometrics = requireStrongBiometricsFromArgs || type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
         PluginError error = canAuthenticate(requireStrongBiometrics);
+
         if (error != null) {
             sendError(error);
             return;
