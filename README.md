@@ -66,6 +66,7 @@ The native source code was based from other GitHub repositories:
   | dialogTitle | String | undefined | Set the title of the fingerprint authentication dialog. |
   | dialogMessage | String | undefined | (REQUIRED) Set the message of the fingerprint authentication dialog. |
   | dialogHint | String | undefined | Set the hint displayed by the fingerprint icon on the fingerprint authentication dialog. |
+  | requireStrongBiometrics | boolean | false | (Android only) Enforces strong biometric authentication (BIOMETRIC_STRONG). |
 
 
 *NOTE: The dialogMessage you present to the user should provide a clear reason for why you are requesting they authenticate themselves, and what action you will be taking based on that authentication.
