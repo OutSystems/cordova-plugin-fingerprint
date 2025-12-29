@@ -8,6 +8,12 @@ The changes documented here do not include those from the original repository.
 
 ## [4.1.0]
 
+## 29-12-2025
+
+- [Android] Added support for strong biometric authentication `BIOMETRIC_STRONG`.
+
+## [4.1.0]
+
 ## 02-05-2025
 
 - Unified cordova plugins for Android and iOS, removing the dependencies on `cordova-plugin-fingerprint-aio` and `cordova-plugin-touchid`
