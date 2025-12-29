@@ -40,7 +40,6 @@ public class Fingerprint extends CordovaPlugin {
 
         this.mCallbackContext = callbackContext;
         Log.v(TAG, "Fingerprint action: " + action);
-
         if ("authenticate".equals(action)) {
             executeAuthenticate(args);
             return true;
@@ -54,15 +53,16 @@ public class Fingerprint extends CordovaPlugin {
              return true;
 
          } else if ("isAvailable".equals(action)) {
-            executeIsAvailable();
+            executeIsAvailable(args);
             return true;
 
         }
         return false;
     }
 
-    private void executeIsAvailable() {
-        PluginError error = canAuthenticate();
+    private void executeIsAvailable(JSONArray args) {
+        boolean requireStrongBiometrics = new Args(args).getBoolean("requireStrongBiometrics", false);
+        PluginError error = canAuthenticate(requireStrongBiometrics);
         if (error != null) {
             sendError(error);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
@@ -89,7 +89,11 @@ public class Fingerprint extends CordovaPlugin {
     }
 
     private void runBiometricActivity(JSONArray args, BiometricActivityType type) {
-        PluginError error = canAuthenticate();
+        boolean requireStrongBiometricsFromArgs = new Args(args).getBoolean("requireStrongBiometrics", false);
+
+        boolean requireStrongBiometrics = requireStrongBiometricsFromArgs || type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
+        PluginError error = canAuthenticate(requireStrongBiometrics);
+
         if (error != null) {
             sendError(error);
             return;
@@ -135,9 +139,9 @@ public class Fingerprint extends CordovaPlugin {
         }
     }
 
-    private PluginError canAuthenticate() {
-        int error = BiometricManager.from(cordova.getContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK);
-
+    private PluginError canAuthenticate(boolean requireStrongBiometrics) {
+        int error = BiometricManager.from(cordova.getContext()).canAuthenticate(requireStrongBiometrics ? BiometricManager.Authenticators.BIOMETRIC_STRONG : BiometricManager.Authenticators.BIOMETRIC_WEAK);
+        
         switch (error) {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:

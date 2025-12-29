@@ -18,7 +18,7 @@ FingerPrint.prototype.BIOMETRIC_TYPE_COMMON = 2;
 FingerPrint.prototype.BIOMETRIC_TYPE_NONE = 3;
 
 // method to check is the touch id option is available in the device
-FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
+FingerPrint.prototype.isAvailable = function (successCallback, errorCallback, object) {
   // success callback function for android 
   function isAvailableSuccess(result) {
 
@@ -40,7 +40,7 @@ FingerPrint.prototype.isAvailable = function (successCallback, errorCallback) {
   }
 
   if(getPlatformId() === "android") {
-    cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", []);
+    cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", [object]);
   }
   else if(getPlatformId() === "ios") {
     cordova.exec(successCallback, errorCallback, "TouchID", "checkSupport", []);
@@ -67,7 +67,7 @@ FingerPrint.prototype.authenticate = function (successCallback, errorCallback, o
     }
 };
 
-FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
+FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback, object) {
   
     function isAvailableSuccess(result) {
         switch (result) {
@@ -88,7 +88,7 @@ FingerPrint.prototype.checkBiometry = function(successCallback, errorCallback) {
     }
 
     if(getPlatformId() === "android") {
-      cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", []);
+      cordova.exec(isAvailableSuccess, isAvailableError, "Fingerprint", "isAvailable", [object]);
     }
     else if(getPlatformId() === "ios") {
       cordova.exec(successCallback, errorCallback, "TouchID", "checkBiometry");
