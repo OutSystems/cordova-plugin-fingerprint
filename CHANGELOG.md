@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## [4.2.0]
+
+## 29-12-2025
+
+- [Android] Added support for strong biometric authentication `BIOMETRIC_STRONG`.
+
 ## [4.1.0]
 
 ## 02-05-2025
