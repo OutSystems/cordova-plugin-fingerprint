@@ -10,6 +10,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
@@ -78,7 +79,19 @@ public class BiometricActivity extends AppCompatActivity {
     }
 
     private void justAuthenticate() {
+        // BiometricPrompt's own PIN fallback is unreliable when no biometric is enrolled
+        // (issuetracker.google.com/142740104), so launch the device-credential prompt directly.
+        if (mPromptInfo.isDeviceCredentialAllowed() && !canAuthenticateWithBiometrics()) {
+            showAuthenticationScreen();
+            return;
+        }
         mBiometricPrompt.authenticate(createPromptInfo());
+    }
+
+    private boolean canAuthenticateWithBiometrics() {
+        int result = BiometricManager.from(this)
+                .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK);
+        return result == BiometricManager.BIOMETRIC_SUCCESS;
     }
 
     private void authenticateToDecrypt() throws CryptoException {

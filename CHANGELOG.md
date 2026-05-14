@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## [4.2.1]
+
+## 14-05-2026
+
+- [Android] Fix `authenticate` failing with `BIOMETRIC_NOT_ENROLLED` ("Biometrics is not configured") on devices that have a PIN/pattern/password but no biometrics enrolled. The plugin now falls back to the system device-credential prompt when `disableBackup` is not set, matching the iOS behaviour.
+
 ## [4.2.0]
 
 ## 29-12-2025
