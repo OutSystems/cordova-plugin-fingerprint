@@ -79,9 +79,12 @@ public class BiometricActivity extends AppCompatActivity {
     }
 
     private void justAuthenticate() {
-        // BiometricPrompt's own PIN fallback is unreliable when no biometric is enrolled
-        // (issuetracker.google.com/142740104), so launch the device-credential prompt directly.
-        if (mPromptInfo.isDeviceCredentialAllowed() && !canAuthenticateWithBiometrics()) {
+        // On Android 10 and below, BiometricPrompt's PIN fallback doesn't fire when no biometric
+        // is enrolled (issuetracker.google.com/142740104, also tracked in RMET-3897). Launch the
+        // device-credential prompt directly on those versions; Android 11+ handles it natively.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q
+                && mPromptInfo.isDeviceCredentialAllowed()
+                && !canAuthenticateWithBiometrics()) {
             showAuthenticationScreen();
             return;
         }
