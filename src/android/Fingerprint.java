@@ -1,5 +1,6 @@
 package de.niklasmerz.cordova.biometric;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -62,7 +63,7 @@ public class Fingerprint extends CordovaPlugin {
 
     private void executeIsAvailable(JSONArray args) {
         boolean requireStrongBiometrics = new Args(args).getBoolean("requireStrongBiometrics", false);
-        PluginError error = canAuthenticate(requireStrongBiometrics);
+        PluginError error = canAuthenticate(requireStrongBiometrics, false);
         if (error != null) {
             sendError(error);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
@@ -89,10 +90,13 @@ public class Fingerprint extends CordovaPlugin {
     }
 
     private void runBiometricActivity(JSONArray args, BiometricActivityType type) {
-        boolean requireStrongBiometricsFromArgs = new Args(args).getBoolean("requireStrongBiometrics", false);
+        Args parsedArgs = new Args(args);
+        boolean requireStrongBiometricsFromArgs = parsedArgs.getBoolean("requireStrongBiometrics", false);
+        boolean isCryptoFlow = type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
 
-        boolean requireStrongBiometrics = requireStrongBiometricsFromArgs || type == BiometricActivityType.REGISTER_SECRET || type == BiometricActivityType.LOAD_SECRET;
-        PluginError error = canAuthenticate(requireStrongBiometrics);
+        boolean requireStrongBiometrics = requireStrongBiometricsFromArgs || isCryptoFlow;
+        boolean allowDeviceCredential = !isCryptoFlow && !parsedArgs.getBoolean("disableBackup", false);
+        PluginError error = canAuthenticate(requireStrongBiometrics, allowDeviceCredential);
 
         if (error != null) {
             sendError(error);
@@ -139,10 +143,22 @@ public class Fingerprint extends CordovaPlugin {
         }
     }
 
-    private PluginError canAuthenticate(boolean requireStrongBiometrics) {
-        int error = BiometricManager.from(cordova.getContext()).canAuthenticate(requireStrongBiometrics ? BiometricManager.Authenticators.BIOMETRIC_STRONG : BiometricManager.Authenticators.BIOMETRIC_WEAK);
-        
-        switch (error) {
+    private PluginError canAuthenticate(boolean requireStrongBiometrics, boolean allowDeviceCredential) {
+        int authenticator = requireStrongBiometrics
+                ? BiometricManager.Authenticators.BIOMETRIC_STRONG
+                : BiometricManager.Authenticators.BIOMETRIC_WEAK;
+        int result = BiometricManager.from(cordova.getContext()).canAuthenticate(authenticator);
+
+        if (result == BiometricManager.BIOMETRIC_SUCCESS) {
+            return null;
+        }
+
+        // Biometrics unavailable, but the device PIN can still authenticate the user.
+        if (allowDeviceCredential && isDeviceSecure()) {
+            return null;
+        }
+
+        switch (result) {
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
                 return PluginError.BIOMETRIC_HARDWARE_NOT_SUPPORTED;
@@ -150,12 +166,16 @@ public class Fingerprint extends CordovaPlugin {
                 return PluginError.BIOMETRIC_NOT_ENROLLED;
             case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
                 return PluginError.BIOMETRIC_SECURITY_VULNERABILITY;
-            case BiometricManager.BIOMETRIC_SUCCESS:
-                return null;
             case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
             default:
                 return PluginError.BIOMETRIC_UNKNOWN_ERROR;
         }
+    }
+
+    private boolean isDeviceSecure() {
+        KeyguardManager km = (KeyguardManager) cordova.getContext()
+                .getSystemService(Context.KEYGUARD_SERVICE);
+        return km != null && km.isDeviceSecure();
     }
 
     private void sendError(int code, String message) {
