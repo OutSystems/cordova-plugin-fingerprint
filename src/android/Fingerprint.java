@@ -62,8 +62,10 @@ public class Fingerprint extends CordovaPlugin {
     }
 
     private void executeIsAvailable(JSONArray args) {
-        boolean requireStrongBiometrics = new Args(args).getBoolean("requireStrongBiometrics", false);
-        PluginError error = canAuthenticate(requireStrongBiometrics, false);
+        Args parsedArgs = new Args(args);
+        boolean requireStrongBiometrics = parsedArgs.getBoolean("requireStrongBiometrics", false);
+        boolean allowDeviceCredential = !parsedArgs.getBoolean("disableBackup", false);
+        PluginError error = canAuthenticate(requireStrongBiometrics, allowDeviceCredential);
         if (error != null) {
             sendError(error);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
