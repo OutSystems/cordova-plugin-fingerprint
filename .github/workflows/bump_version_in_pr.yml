@@ -1,0 +1,173 @@
+name: Bump version in PR
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: 'PR number to bump'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: bump-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: true
+
+jobs:
+  bump:
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve PR metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER_INPUT: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER_INPUT}" > /tmp/pr.json
+          head_ref=$(jq -r '.head.ref' /tmp/pr.json)
+          head_repo=$(jq -r '.head.repo.full_name // ""' /tmp/pr.json)
+          base_ref=$(jq -r '.base.ref' /tmp/pr.json)
+          title=$(jq -r '.title' /tmp/pr.json)
+          body=$(jq -r '.body // ""' /tmp/pr.json)
+          {
+            echo "PR_NUMBER=$PR_NUMBER_INPUT"
+            echo "PR_HEAD_REF=$head_ref"
+            echo "PR_HEAD_REPO=$head_repo"
+            echo "PR_BASE_REF=$base_ref"
+            echo "PR_TITLE<<EOF_TITLE"
+            echo "$title"
+            echo "EOF_TITLE"
+            echo "PR_BODY<<EOF_BODY"
+            echo "$body"
+            echo "EOF_BODY"
+          } >> "$GITHUB_ENV"
+          echo "Resolved PR #$PR_NUMBER_INPUT: head=$head_repo@$head_ref base=$base_ref"
+
+      - name: Skip if PR does not target master
+        id: gate_base
+        run: |
+          set -euo pipefail
+          if [ "$PR_BASE_REF" != "master" ]; then
+            echo "PR targets $PR_BASE_REF (not master) — skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if PR is from a fork
+        if: steps.gate_base.outputs.skip != 'true'
+        id: gate_fork
+        run: |
+          set -euo pipefail
+          if [ "$PR_HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+            echo "PR is from a fork ($PR_HEAD_REPO) — skipping (cannot push to fork branches)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout master (trusted script source)
+        if: steps.gate_base.outputs.skip != 'true' && steps.gate_fork.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          path: master
+
+      - name: Checkout PR head (file write target)
+        if: steps.gate_base.outputs.skip != 'true' && steps.gate_fork.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.PR_HEAD_REF }}
+          path: pr
+          token: ${{ github.token }}
+
+      - name: Fetch commit messages for breaking-change detection
+        if: steps.gate_base.outputs.skip != 'true' && steps.gate_fork.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/commits" --paginate \
+            | jq -r '.[].commit.message' > /tmp/commit-messages.txt
+          {
+            echo "COMMIT_FOOTERS<<EOF_COMMITS"
+            cat /tmp/commit-messages.txt
+            echo "EOF_COMMITS"
+          } >> "$GITHUB_ENV"
+
+      - name: Compute and apply version bump
+        if: steps.gate_base.outputs.skip != 'true' && steps.gate_fork.outputs.skip != 'true'
+        id: compute
+        env:
+          MAIN_DIR: ${{ github.workspace }}/master
+          PR_DIR: ${{ github.workspace }}/pr
+        run: node master/.github/scripts/compute_release.cjs
+
+      - name: Create verified bump commit via Git Data API
+        if: steps.compute.outputs.changed == 'true'
+        working-directory: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUMP: ${{ steps.compute.outputs.bump }}
+          VERSION: ${{ steps.compute.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [ "$BUMP" = "none" ]; then
+            commit_msg="chore(release): revert version bump"
+          else
+            commit_msg="chore(release): prepare $VERSION"
+          fi
+
+          # Parent commit = current tip of the PR branch on the remote.
+          # If the remote has moved since we checked out, the final PATCH
+          # below will fail (non-fast-forward) — that's the intended behavior.
+          parent_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/heads/${PR_HEAD_REF}" --jq '.object.sha')
+          parent_tree=$(gh api "repos/${GITHUB_REPOSITORY}/git/commits/${parent_sha}" --jq '.tree.sha')
+
+          # Upload each modified file as a blob.
+          # Strip newlines from base64 output (Linux's base64 wraps at 76 cols).
+          create_blob() {
+            local path=$1
+            local b64
+            b64=$(base64 < "$path" | tr -d '\n')
+            jq -n --arg content "$b64" '{content: $content, encoding: "base64"}' \
+              | gh api -X POST "repos/${GITHUB_REPOSITORY}/git/blobs" --input - --jq '.sha'
+          }
+          pkg_blob=$(create_blob package.json)
+          xml_blob=$(create_blob plugin.xml)
+          chg_blob=$(create_blob CHANGELOG.md)
+
+          # Build a new tree based on the parent's tree, overwriting only
+          # the three files we modified.
+          tree_sha=$(jq -n \
+              --arg base "$parent_tree" \
+              --arg pkg "$pkg_blob" \
+              --arg xml "$xml_blob" \
+              --arg chg "$chg_blob" \
+              '{base_tree: $base, tree: [
+                {path: "package.json", mode: "100644", type: "blob", sha: $pkg},
+                {path: "plugin.xml",   mode: "100644", type: "blob", sha: $xml},
+                {path: "CHANGELOG.md", mode: "100644", type: "blob", sha: $chg}
+              ]}' \
+            | gh api -X POST "repos/${GITHUB_REPOSITORY}/git/trees" --input - --jq '.sha')
+
+          # Create the commit. Authored by github-actions[bot] (the installation
+          # identity behind GITHUB_TOKEN); GitHub signs it server-side so it
+          # shows as Verified.
+          commit_sha=$(jq -n \
+              --arg msg "$commit_msg" \
+              --arg tree "$tree_sha" \
+              --arg parent "$parent_sha" \
+              '{message: $msg, tree: $tree, parents: [$parent]}' \
+            | gh api -X POST "repos/${GITHUB_REPOSITORY}/git/commits" --input - --jq '.sha')
+
+          # Move the PR branch ref to the new commit. Not forced — fails if
+          # the remote ref moved since parent_sha was read.
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/${PR_HEAD_REF}" \
+            -f sha="$commit_sha"
+
+          echo "Created verified commit $commit_sha on $PR_HEAD_REF"

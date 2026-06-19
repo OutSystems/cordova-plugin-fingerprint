@@ -1,0 +1,30 @@
+name: Validate PR title for Conventional Commits Format
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate-pr-title-conventional:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title for conventional commits
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const prTitle = context.payload.pull_request.title;
+
+            // Conventional commits regex: type(scope?)!?: description
+            // Allowed types match the bump rules in compute_release.cjs.
+            const conventionalRegex = /^(feat|fix|chore|docs|style|refactor|perf|test|ci|build)(\([a-z0-9\-]+\))?!?: .+/;
+
+            if (!conventionalRegex.test(prTitle)) {
+              core.setFailed(
+                `PR title "${prTitle}" is not in conventional commit format.\n` +
+                `Example: "feat(android): add new validation function"\n` +
+                `For a breaking change, use "feat!:" or include "BREAKING CHANGE:" in the PR body or a commit footer.`
+              );
+            } else {
+              console.log(`PR title "${prTitle}" follows conventional commit format`);
+            }
