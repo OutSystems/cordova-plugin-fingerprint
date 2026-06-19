@@ -1,0 +1,103 @@
+name: Release on master
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+  actions: write
+
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ github.token }}
+
+      - name: Read version from package.json
+        id: version
+        run: |
+          set -euo pipefail
+          version=$(jq -r '.version' package.json)
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version format in package.json: $version"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version='${{ steps.version.outputs.version }}'
+          if gh api "repos/${GITHUB_REPOSITORY}/git/refs/tags/${version}" --silent 2>/dev/null; then
+            echo "Tag $version already exists — no release needed."
+            echo "needs_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $version does not exist — proceeding to release."
+            echo "needs_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Extract release notes from CHANGELOG
+        if: steps.tag.outputs.needs_release == 'true'
+        run: |
+          set -euo pipefail
+          version='${{ steps.version.outputs.version }}'
+          awk -v target="## $version" -v target_bracketed="## [$version]" '
+            $0 == target || $0 == target_bracketed || $0 ~ ("^## \\[" version "\\]( -|$)") { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/release-notes.md
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "::error::No CHANGELOG section found for $version"
+            exit 1
+          fi
+          cat /tmp/release-notes.md
+
+      - name: Create tag and GitHub Release
+        if: steps.tag.outputs.needs_release == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version='${{ steps.version.outputs.version }}'
+          git tag "$version"
+          git push origin "$version"
+          gh release create "$version" \
+            --title "$version" \
+            --notes-file /tmp/release-notes.md
+
+      - name: Re-trigger bump on all open PRs targeting master
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          failed_prs=()
+          mapfile -t open_prs < <(gh pr list --base master --state open --json number --jq '.[].number')
+          if [ "${#open_prs[@]}" -eq 0 ]; then
+            echo "No open PRs targeting master — nothing to dispatch."
+            exit 0
+          fi
+          for pr in "${open_prs[@]}"; do
+            echo "Dispatching bump for PR #$pr..."
+            if ! gh workflow run bump_version_in_pr.yml --ref master --field pr="$pr"; then
+              failed_prs+=("$pr")
+            fi
+          done
+          if [ "${#failed_prs[@]}" -gt 0 ]; then
+            echo "::error::Failed to dispatch bump for PRs: ${failed_prs[*]}"
+            exit 1
+          fi
