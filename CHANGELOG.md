@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The changes documented here do not include those from the original repository.
 
+## [4.3.1]
+
+### Fixes
+
+- fix(android): keep resources read by name when shrinking resources (#33)
+
 ## [4.3.0]
 
 ## 27-05-2026
