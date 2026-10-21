@@ -47,6 +47,7 @@
         <framework src="src/android/build.gradle" custom="true" type="gradleReference"/>
         <resource-file src="src/android/res/biometric_activity.xml" target="res/layout/biometric_activity.xml" />
         <resource-file src="src/android/res/styles.xml" target="res/values/biometric-styles.xml" />
+        <resource-file src="src/android/res/fingerprint_keep.xml" target="res/raw/fingerprint_keep.xml" />
         <source-file src="src/android/PromptInfo.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
         <source-file src="src/android/BiometricActivity.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
         <source-file src="src/android/BiometricActivityType.java" target-dir="src/de/niklasmerz/cordova/biometric"/>
